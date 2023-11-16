@@ -1,0 +1,110 @@
+version: 2
+
+models:
+- name: addresses
+  columns:
+    - name: address_id
+      tests:
+        - not_null
+        - unique
+    - name: zipcode
+      tests:
+        - not_null
+    - name: country
+      tests:
+        - not_null
+    - name: address
+      tests:
+        - not_null
+    - name: state
+      tests:
+        - not_null
+    - name: date_load
+      tests:
+        - not_null
+- name: events
+  columns:
+    - name: event_id
+      tests:
+        - not_null
+        - unique
+    - name: page_url
+    - name: event_type
+      tests:
+        - not_null
+        - accepted_values:
+            values: ['checkout','package_shipped','add_to_cart','page_view']
+    - name: user_id
+      tests:
+        - not_null
+        - unique
+        - relationships:
+            field: user_id
+            to: ref('sql_server_dbo','events')
+    - name: product_id
+    - name: session_id
+      tests:
+        - not_null
+    - name: created_at
+      tests:
+        - not_null
+    - name: order_id
+    - name: date_load
+      tests:
+        - not_null
+- name: orders
+  columns:
+    - name: order_id
+      tests:
+        - not_null
+    - name: shipping_service
+    - name: shipping_cost
+      tests:
+        - positive_values
+    - name: address_id
+      tests:
+        - not_null
+    - name: created_at
+      tests:
+        - not_null
+    - name: promo_id
+    - name: estimated_delivery_at
+    - name: order_cost
+    - name: user_id
+    
+    - name: order_total
+    - name: delivered_id
+    - name: tracking_at
+    - name: status
+    - name: date_load
+- name: order_items
+  columns:
+    - name: order_id
+    - name: product_id
+    - name: quantity
+    - name: date_load
+- name: products
+  columns:
+    - name: product_id
+    - name: price
+    - name: name
+    - name: inventory
+    - name: date_load
+- name: promos
+  columns:
+    - name: promo_id
+    - name: discount
+    - name: status
+    - name: date_load
+- name: users
+  columns:
+    - name: user_id
+    - name: updated_at
+    - name: address_id
+    - name: last_name
+    - name: created_at
+    - name: phone_number
+    - name: total_orders
+    - name: first_name
+    - name: email
+    - name: date_load

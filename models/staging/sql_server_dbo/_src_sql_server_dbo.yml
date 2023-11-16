@@ -1,0 +1,308 @@
+version: 2
+
+sources:
+  - name: sql_server_dbo # name of the source
+    schema: sql_server_dbo # this is the schema our raw data lives in
+    database: ALUMNO26_DEV_BRONZE_DB # this is the name of our database
+
+    quoting:
+      database: false
+      schema: false
+      identifier: false
+
+    freshness:
+      warn_after: { count: 24, period: hour }
+      error_after: { count: 48, period: hour }
+
+    tables:
+      - name: addresses
+        description: "Tabla Source que relaciona la Dirección con los Usuarios."
+        columns:
+          - name: address_id
+            data_type: varchar
+            description: "Primary Key de la tabla."
+            tests:
+            - not_null
+            - unique
+            - relationships:
+                field: user_id
+                to: ref('sql_server_dbo','users')
+          - name: zipcode
+            data_type: number
+            description: "Un número que representa el Código Postal de la dirección."
+          - name: country
+            data_type: varchar
+            description: "Cadena que representa el país de la dirección."
+          - name: address
+            data_type: varchar
+            description: "Cadena que representa la dirección."
+          - name: state
+            data_type: varchar
+            description: "Cadena que representa el estado."
+          - name: _fivetran_deleted
+            data_type: boolean
+            description: ""
+          - name: _fivetran_synced
+            data_type: timestamp_tz
+            description: ""
+
+      - name: events
+        description: "Tabla que relaciona lo Eventos de la página con los Orders."
+        columns:
+          - name: event_id
+            data_type: varchar
+            description: "Primary Key de la tabla."
+            tests:
+            - not_null
+            - unique
+          - name: page_url
+            data_type: varchar
+            description: "Dirección de la pagina en la que se produjo el evento."
+          - name: event_type
+            data_type: varchar
+            description: "Tipo de evento registrado, limitado a los siguientes valores: 'checkout','package_shipped','add_to_cart','page_view'."
+            tests:
+              - not_null
+              - accepted_values:
+                  values: ['checkout','package_shipped','add_to_cart','page_view']
+          - name: user_id
+            data_type: varchar
+            description: "Foreign Key que relaciona con la tabla de usuarios."
+            tests:
+              - not_null
+              - unique
+          - name: product_id
+            data_type: varchar
+            description: "Foreign Key que relaciona con la tabla de productos."
+            tests:
+              - not_null
+              - unique
+          - name: session_id
+            data_type: varchar
+            description: "Clave que agrupa los eventos de una misma sesión."
+            tests:
+              - not_null
+              - unique
+          - name: created_at
+            data_type: timestamp_ntz
+            description: "Fecha en la que se creó el evento."
+            tests:
+              - not_null
+          - name: order_id
+            data_type: varchar
+            description: "Foreign Key que relaciona con la tabla de pedidos."
+            tests:
+              - not_null
+              - unique
+          - name: _fivetran_deleted
+            data_type: boolean
+            description: ""
+          - name: _fivetran_synced
+            data_type: timestamp_tz
+            description: ""
+
+      - name: order_items
+        description: "Tabla que relaciona lo Productos de la página con los Orders."
+        columns:
+          - name: order_id
+            data_type: varchar
+            description: "Primary Key de la tabla."
+            tests:
+              - not_null
+              - unique
+          - name: product_id
+            data_type: varchar
+            description: "Foreign Key que relaciona con la tabla de productos."
+            tests:
+              - not_null
+              - unique
+          - name: quantity
+            data_type: number
+            description: "Cantidad de productos adquiridos en un pedido."
+            tests:
+              - not_null
+          - name: _fivetran_deleted
+            data_type: boolean
+            description: ""
+          - name: _fivetran_synced
+            data_type: timestamp_tz
+            description: ""
+
+      - name: orders
+        description: "Tabla que relaciona los Orders de la página con los Envios."
+        columns:
+          - name: order_id
+            data_type: varchar
+            description: "Primary Key de la tabla."
+            tests:
+              - not_null
+              - unique
+          - name: shipping_service
+            data_type: varchar
+            description: "Servicio utilizado para el envío."
+          - name: shipping_cost
+            data_type: float
+            description: "Coste del envío."
+          - name: address_id
+            data_type: varchar
+            description: "Foreign Key que relaciona con la tabla de direcciones."
+            tests:
+              - not_null
+              - unique
+          - name: created_at
+            data_type: timestamp_tz
+            description: "Fecha en la que se creó el Pedido."
+            tests:
+              - not_null
+              - unique
+          - name: promo_id
+            data_type: varchar
+            description: "Foreign Key que relaciona con la tabla de Promos."
+            tests:
+              - not_null
+              - unique
+          - name: estimated_delivery_at
+            data_type: timestamp_tz
+            description: "Tiempo estimado de entrega del pedido."
+          - name: order_cost
+            data_type: float
+            description: "Coste del pedido."
+          - name: user_id
+            data_type: varchar
+            description: "Foreign Key que relaciona con la tabla de usuarios."
+            tests:
+              - not_null
+              - unique
+          - name: order_total
+            data_type: float
+            description: "Coste total del pedido."
+          - name: delivered_at
+            data_type: timestamp_tz
+            description: "Fecha en la que ha sido entregado el pedido."
+          - name: tracking_id
+            data_type: varchar
+            description: "Clave del seguimiento del envío."
+          - name: status
+            data_type: varchar
+            description: "Estado del envío"
+          - name: _fivetran_deleted
+            data_type: boolean
+            description: ""
+          - name: _fivetran_synced
+            data_type: timestamp_tz
+            description: ""
+
+      - name: products
+        description: "Tabla que lista los Productos."
+        columns:
+          - name: product_id
+            data_type: varchar
+            description: "Primary Key de la tabla."
+            tests:
+              - not_null
+              - unique
+          - name: price
+            data_type: float
+            description: "Precio del producto."
+            tests:
+              - not_null
+              - positive_values
+          - name: name
+            data_type: varchar
+            description: "Nombre del producto."
+            tests:
+              - not_null
+              - unique
+          - name: inventory
+            data_type: number
+            description: "Cantidad de productos en el inventario."
+            tests:
+              - not_null
+              - unique
+          - name: _fivetran_deleted
+            data_type: boolean
+            description: ""
+          - name: _fivetran_synced
+            data_type: timestamp_tz
+            description: ""
+
+      - name: promos
+        description: "Tabla que lista las Promociones."
+        columns:
+          - name: promo_id
+            data_type: varchar
+            description: "Primary Key de la tabla."
+            tests:
+              - not_null
+              - unique
+              - relationships:
+                  field: promo_id
+                  to: ref('sql_server_dbo','orders')
+          - name: discount
+            data_type: number
+            description: "Descuento que se aplica con la promoción."
+          - name: status
+            data_type: varchar
+            description: "Estado de la promoción."
+            tests:
+              - not_null
+          - name: _fivetran_deleted
+            data_type: boolean
+            description: ""
+          - name: _fivetran_synced
+            data_type: timestamp_tz
+            description: ""
+
+      - name: users
+        description: "Tabla que relaciona los Usuarios de la página con las Direcciones."
+        columns:
+          - name: user_id
+            data_type: varchar
+            description: "Primary Key de la tabla."
+            tests:
+              - not_null
+              - unique
+          - name: updated_at
+            data_type: timestamp_tz
+            description: "Fecha a la que se actualizó el usuario."
+            tests:
+              - not_null
+          - name: address_id
+            data_type: varchar
+            description: "Foreign Key que relaciona con la tabla de direcciones."
+            tests:
+              - not_null
+          - name: last_name
+            data_type: varchar
+            description: "Apellido del usuario."
+            tests:
+              - not_null
+          - name: created_at
+            data_type: timestamp_tz
+            description: "Fecha en la que se introdujo el primer registro del usuario."
+            tests:
+              - not_null
+          - name: phone_number
+            data_type: varchar
+            description: "Número de teléfono del usuario."
+            tests:
+              - not_null
+          - name: total_orders
+            data_type: number
+            description: "Número total de pedidos del usuario."
+          - name: first_name
+            data_type: varchar
+            description: "Nombre del Usuario."
+            tests:
+              - not_null
+          - name: email
+            data_type: varchar
+            description: "Email del usuario."
+            tests:
+              - not_null
+          - name: _fivetran_deleted
+            data_type: boolean
+            description: ""
+          - name: _fivetran_synced
+            data_type: timestamp_tz
+            description: ""
