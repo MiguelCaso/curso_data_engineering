@@ -1,0 +1,1 @@
+SELECT DISTINCT shipping_service FROM stg_orders
