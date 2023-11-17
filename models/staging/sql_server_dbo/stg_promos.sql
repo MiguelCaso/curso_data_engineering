@@ -12,7 +12,8 @@ WITH src_promos AS (
 
 stg_promos AS (
     SELECT
-          promo_id
+        {{ dbt_utils.generate_surrogate_key(['promo_id']) }} as promokey_id
+        , promo_id
         , discount
         , status
         , _fivetran_synced AS date_load

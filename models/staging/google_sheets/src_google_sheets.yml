@@ -19,7 +19,20 @@ sources:
         loaded_at_field: _fivetran_synced
         columns:
           - name: _row
+            description: "Primary Key de la tabla."
+            tests:
+              - unique
+              - not_null
           - name: product_id
+            description: "Foreign Key que relaciona con el Producto."
+            tests:
+              - not_null
           - name: quantity
+            description: "Cantidad de productos que se presupuestaron."
+            tests:
+              - not_null
           - name: month
+            description: "Mes al que se refiere el presupuesto."
+            tests:
+              - not_null
           - name: _fivetran_synced
