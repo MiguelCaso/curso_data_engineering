@@ -1,1 +1,1 @@
-SELECT * FROM stg_promos
+SELECT * FROM stg_address

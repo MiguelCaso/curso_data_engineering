@@ -1,23 +1,27 @@
+{{ config(
+    materialized='incremental',
+    unique_key = '_row'
+    ) 
+    }}
 
-{{
-  config(
-    materialized='view'
-  )
-}}
 
-WITH src_budget AS (
-    SELECT * 
-    FROM {{ source('google_sheets', 'budget') }}
-    ),
+WITH stg_budget_products AS (
+    SELECT *
+    FROM {{ source('google_sheets','budget') }}
+    {% if is_incremental() %}
 
-stg_budget AS (
+        WHERE _fivetran_synced > (SELECT max(_fivetran_synced) FROM {{ this }})
+
+    {% endif %}
+),
+
+renamed_casted AS (
     SELECT
-          _row
-        , product_id
-        , quantity
-        , month
-        , _fivetran_synced AS date_load
-    FROM src_budget
-    )
+        _row,
+        month,
+        quantity,
+        _fivetran_synced
+    FROM stg_budget_products
+)
 
-SELECT * FROM stg_budget
+SELECT * FROM renamed_casted
