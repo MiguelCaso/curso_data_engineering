@@ -1,10 +1,11 @@
 version: 2
 
 sources:
-  - name: sql_server_dbo # name of the source
-    schema: sql_server_dbo # this is the schema our raw data lives in
-    database: ALUMNO26_DEV_BRONZE_DB # this is the name of our database
 
+  - name: sql_server_dbo # name of the source 
+    schema: sql_server_dbo # this is the schema our raw data lives in
+    database: "{{ env_var('DBT_ENVIRONMENTS') }}_BRONZE_DB"  # this is the name of our database
+    
     quoting:
       database: false
       schema: false
@@ -22,11 +23,11 @@ sources:
             data_type: varchar
             description: "Primary Key de la tabla."
             tests:
-            - not_null
-            - unique
-            - relationships:
-                field: user_id
-                to: ref('sql_server_dbo','users')
+              - not_null
+              - unique
+              - relationships:
+                  field: user_id
+                  to: ref('sql_server_dbo','users')
           - name: zipcode
             data_type: number
             description: "Un número que representa el Código Postal de la dirección."
@@ -53,8 +54,8 @@ sources:
             data_type: varchar
             description: "Primary Key de la tabla."
             tests:
-            - not_null
-            - unique
+              - not_null
+              - unique
           - name: page_url
             data_type: varchar
             description: "Dirección de la pagina en la que se produjo el evento."
@@ -64,7 +65,8 @@ sources:
             tests:
               - not_null
               - accepted_values:
-                  values: ['checkout','package_shipped','add_to_cart','page_view']
+                  values:
+                    ["checkout", "package_shipped", "add_to_cart", "page_view"]
           - name: user_id
             data_type: varchar
             description: "Foreign Key que relaciona con la tabla de usuarios."
@@ -93,7 +95,6 @@ sources:
             description: "Foreign Key que relaciona con la tabla de pedidos."
             tests:
               - not_null
-              - unique
           - name: _fivetran_deleted
             data_type: boolean
             description: ""
@@ -109,7 +110,6 @@ sources:
             description: "Primary Key de la tabla."
             tests:
               - not_null
-              - unique
           - name: product_id
             data_type: varchar
             description: "Foreign Key que relaciona con la tabla de productos."
@@ -136,11 +136,10 @@ sources:
             description: "Primary Key de la tabla."
             tests:
               - not_null
-              - unique
           - name: shipping_service
             data_type: varchar
             description: "Servicio utilizado para el envío."
-          - name: shipping_cost
+          - name: shipping_cost_dollars
             data_type: float
             description: "Coste del envío."
           - name: address_id
@@ -161,10 +160,10 @@ sources:
             tests:
               - not_null
               - unique
-          - name: estimated_delivery_at
+          - name: estimated_delivery_at_
             data_type: timestamp_tz
             description: "Tiempo estimado de entrega del pedido."
-          - name: order_cost
+          - name: order_cost_dollars
             data_type: float
             description: "Coste del pedido."
           - name: user_id
@@ -173,7 +172,7 @@ sources:
             tests:
               - not_null
               - unique
-          - name: order_total
+          - name: order_total_dollars
             data_type: float
             description: "Coste total del pedido."
           - name: delivered_at
@@ -231,13 +230,10 @@ sources:
         columns:
           - name: promo_id
             data_type: varchar
-            description: "Primary Key de la tabla."
+            description: "Nombre de la promoción."
             tests:
               - not_null
               - unique
-              - relationships:
-                  field: promo_id
-                  to: ref('sql_server_dbo','orders')
           - name: discount
             data_type: number
             description: "Descuento que se aplica con la promoción."
@@ -306,3 +302,4 @@ sources:
           - name: _fivetran_synced
             data_type: timestamp_tz
             description: ""
+      

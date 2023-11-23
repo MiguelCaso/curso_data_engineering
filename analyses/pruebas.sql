@@ -1,1 +1,1 @@
-SELECT DISTINCT shipping_service FROM stg_orders
+SELECT * FROM stg_address
