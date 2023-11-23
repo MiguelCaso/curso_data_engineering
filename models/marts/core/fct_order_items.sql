@@ -4,6 +4,8 @@
   )
 }}
 
+-- Pendiente
+
 WITH stg_order_items AS (
     SELECT
     *
