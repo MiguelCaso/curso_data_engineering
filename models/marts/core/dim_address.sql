@@ -4,7 +4,7 @@
   )
 }}
 
-WITH stg_addresses AS (
+WITH int_addresses AS (
     SELECT 
         address_id,
         zipcode,
@@ -16,4 +16,4 @@ WITH stg_addresses AS (
     FROM {{ ref('stg_addresses') }}
 )
 
-SELECT * FROM stg_addresses
+SELECT * FROM int_addresses

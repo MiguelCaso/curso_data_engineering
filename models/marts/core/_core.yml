@@ -6,68 +6,40 @@ models:
       - name: address_id
       - name: zipcode
       - name: country
-      - name: address
+      - name: street
+      - name: number
       - name: state
-      - name: date_load
-  - name: dim_events
-    columns:
-      - name: event_id
-      - name: page_url
-      - name: event_type
-      - name: user_id
-      - name: product_id
-      - name: session_id
-      - name: created_at
-      - name: order_id
       - name: date_load
   - name: dim_orders
     columns:
       - name: order_id
-      - name: shipping_service
-      - name: shipping_cost_dollars
-      - name: address_id
       - name: created_at_utc
-      - name: promo_id
-      - name: estimated_delivery_at_utc
-      - name: order_cost_dollars
+      - name: promokey_id
       - name: user_id
+      - name: order_cost_dollars
+      - name: shipping_cost_dollars
       - name: order_total_dollars
-      - name: delivered_id
+  - name: dim_shipping
+    columns:
+      - name: order_id
+      - name: shipping_service
+      - name: address_id
+      - name: estimated_delivery_at_utc
       - name: tracking_id
+      - name: delivered_at_utc
       - name: status
-      - name: date_load
   - name: fct_order_items
     columns:
       - name: order_id
       - name: product_id
       - name: quantity
       - name: date_load
-  - name: dim_products
-    columns:
-      - name: product_id
-      - name: price
-      - name: name
-      - name: inventory
-      - name: date_load
   - name: dim_promos
     columns:
       - name: promokey_id
-      - name: promo_id
+      - name: promo_name
       - name: discount
       - name: status
-      - name: date_load
-  - name: dim_users
-    columns:
-      - name: user_id
-      - name: updated_at
-      - name: address_id
-      - name: last_name
-      - name: created_at
-      - name: phone_number
-      - name: total_orders
-      - name: first_name
-      - name: email
-      - name: date_load
   - name: dim_date
     columns:
       - name: fecha_forecast
