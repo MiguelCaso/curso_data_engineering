@@ -5,7 +5,7 @@
   )
 }}
 
-WITH stg_orders AS (
+WITH int_orders AS (
     SELECT 
           order_id
         , created_at_utc
@@ -15,11 +15,6 @@ WITH stg_orders AS (
         , shipping_cost_dollars
         , order_total_dollars
     FROM {{ ref('stg_orders') }}
-    ),
-
-int_orders AS (
-    SELECT *
-    FROM stg_orders
     )
 
 SELECT * FROM int_orders

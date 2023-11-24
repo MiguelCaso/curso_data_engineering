@@ -18,8 +18,7 @@ stg_shipping AS (
     estimated_delivery_at_utc,
     tracking_id,
     delivered_at_utc,
-    status,
-    date_load
+    status
     FROM {{ ref ('stg_orders')}}
 --    JOIN distinct_orders ON distinct_orders.sin_duplicar = stg_shipping.order_id
 )

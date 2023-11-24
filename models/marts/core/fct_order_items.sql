@@ -15,7 +15,7 @@ WITH stg_order_items AS (
 int_order_items AS (
     SELECT
     *
-    FROM src_orders
+    FROM stg_order_items
 )
 
 SELECT * FROM int_order_items

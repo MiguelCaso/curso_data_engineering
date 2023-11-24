@@ -4,7 +4,7 @@
   )
 }}
 
-WITH stg_addresses AS (
+WITH int_fechas AS (
     SELECT 
       fecha_forecast
     , id_date
@@ -19,4 +19,4 @@ WITH stg_addresses AS (
     FROM {{ ref('stg_fechas') }}
 )
 
-SELECT * FROM stg_fechas
+SELECT * FROM int_fechas
