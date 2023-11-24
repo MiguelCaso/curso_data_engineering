@@ -12,10 +12,10 @@ WITH stg_addresses AS (
     , mes
     , desc_mes
     , id_anio_mes
-    , as desc_dia
+    , desc_dia
     , dia_previo
-    , as anio_semana_dia
-    , as semana
+    , anio_semana_dia
+    , semana
     FROM {{ ref('stg_fechas') }}
 )
 

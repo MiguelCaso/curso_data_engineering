@@ -12,15 +12,14 @@ WITH stg_orders AS (
         , promokey_id
         , user_id
         , order_cost_dollars
-        , shipping_cost_dollars,
+        , shipping_cost_dollars
         , order_total_dollars
-        , user_id
     FROM {{ ref('stg_orders') }}
     ),
 
 int_orders AS (
     SELECT *
-    FROM src_orders
+    FROM stg_orders
     )
 
 SELECT * FROM int_orders
