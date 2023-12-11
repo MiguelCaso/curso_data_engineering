@@ -52,3 +52,15 @@ models:
       - name: dia_previo
       - name: anio_semana_dia
       - name: semana
+  - name: dim_users
+    columns:
+      - name: user_id
+      - name: address_id
+      - name: first_name
+      - name: last_name
+      - name: phone_number
+      - name: email
+      - name: created_at
+      - name: updated_at
+      - name: total_orders
+      - name: date_load

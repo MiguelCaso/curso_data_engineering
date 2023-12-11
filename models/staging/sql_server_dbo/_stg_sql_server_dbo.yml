@@ -2,123 +2,239 @@ version: 2
 
 models:
   - name: addresses
+    description: "Listado de todas las direcciones utilizadas"
     columns:
       - name: address_id
+        description: "Clave Primaria de la tabla."
         tests:
           - not_null
           - unique
       - name: zipcode
+        description: "Código postal asociado a la dirección."
         tests:
           - not_null
       - name: country
+        description: "País asociado a la dirección."
         tests:
           - not_null
       - name: address
+        description: "Dirección del envío."
         tests:
           - not_null
       - name: state
+        description: "Estado asociado a la dirección."
         tests:
           - not_null
       - name: date_load
+        description: "Fecha de carga del registro."
         tests:
           - not_null
   - name: events
+    description: "Tabla que registra los eventos originados en la página web."
     columns:
       - name: event_id
+        description: "Clave Primaria de la Tabla de Eventos."
         tests:
           - not_null
           - unique
       - name: page_url
+        description: "Dirección URL en la que se produjo el evento."
       - name: event_type
+        description: "Tipo de evento registrado."
         tests:
           - not_null
           - accepted_values:
               values:
                 ["checkout", "package_shipped", "add_to_cart", "page_view"]
       - name: user_id
+        description: "Clave foránea que relaciona el usuario con el evento."
         tests:
           - not_null
-          - unique
           - relationships:
               field: user_id
               to: ref('sql_server_dbo','events')
       - name: product_id
+        description: "Clave foránea que relaciona el producto con el evento."
+        tests:
+          - relationships:
+              field: product_id
+              to: ref('sql_server_dbo','products')
       - name: session_id
+        description: "Identificador de la sesión web abierta por el usuario."
         tests:
           - not_null
       - name: created_at
+        description: "Clave foránea que indica la fecha de creación del evento."
         tests:
           - not_null
       - name: order_id
+        description: "Clave foránea que relaciona el pedido con el evento."
       - name: date_load
+        description: "Fecha de carga del registro."
         tests:
           - not_null
   - name: orders
+    description: "Tabla que registra todos los pedidos realizados por los diferentes usuarios."
     columns:
       - name: order_id
+        description: "Clave primaria de la tabla de Pedidos."
         tests:
           - not_null
+          - unique
       - name: shipping_service
+        description: "Empresa utilizada para realizar el envío."
       - name: shipping_cost_dollars
+        description: "Coste de la línea de pedido (producto x cantidad) en dólares."
         tests:
           - positive_values
       - name: address_id
+        description: "Clave foránea que relaciona la dirección de envío con el pedido."
         tests:
           - not_null
       - name: created_at_utc
+        description: "Clave foránea que indica la fecha en la que se creó el pedido, en UTC."
         tests:
           - not_null
       - name: promo_id
+        description: "Clave foránea que relaciona la promoción utilizada con el pedido."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_promos')
+              field: promokey_id
       - name: estimated_delivery_at_utc
+        description: "Fecha de envío estimada, en la que el usuario recibiría su pedido."
       - name: order_cost_dollars
+        description: "Coste de la línea de pedido, medido en dólares."
+        tests:
+          - positive_values
       - name: user_id
+        description: "Clave foránea que relaciona el usuario con el pedido."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('user_id')
+              field: stg_users
       - name: order_total_dollars
-      - name: delivered_id
+        description: "Coste total del pedido, incluídos los gastos de envío."
+        tests:
+          - positive_values
+      - name: delivered_at_utc
+        description: "Fecha de envío final, en la que el usuario recibió su pedido."
       - name: tracking_id
+        description: "Número de seguimiento para el envío."
       - name: status
+        description: "Estado en el que se encuentra actualmente el envío, según esté en preparación, enviado o entregado."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['preparing', 'delivered', 'shipped']
       - name: date_load
+        description: "Fecha en la que se cargó el registro."
+        tests:
+          - not_null
   - name: order_items
+    description: "Tabla que relaciona los pedidos con los productos."
     columns:
       - name: order_id
+        description: "Clave foránea que relaciona el pedido con el producto."
+        tests:
+          - not_null
       - name: product_id
+        description: "Clave foránea que relaciona el producto con el pedido."
+        tests:
+          - not_null
       - name: quantity
+        description: "Cantidad de productos encargados en la línea de pedido."
+        tests:
+          - positive_values
       - name: date_load
+        description: "Fecha en la que se cargó el registro."
+        tests:
+          - not_null
   - name: products
+    description: "Tabla que lista los productos disponibles por el servicio web."
     columns:
       - name: product_id
+        description: "Clave Primaria de la tabla de Productos."
+        tests:
+          - not_null
+          - unique
       - name: price
+        description: "Precio individual del producto."
+        tests:
+          - positive_values
       - name: name
+        description: "Nombre asociado al producto."
+        tests:
+          - not_null
       - name: inventory
+        description: "Cantidad disponible para la venta de cada producto."
+        tests:
+          - positive_values
       - name: date_load
+        description: "Fecha de carga del registro."
+        tests:
+          - not_null
   - name: promos
+    description: "Tabla que registra las diferentes promociones existentes."
     columns:
       - name: promokey_id
+        description: "Clave subrogada de la tabla de Promociones."
         tests:
           - not_null
-          - relationships:
-              field: 'promo_id'
-              to: ref('sql_server', 'orders')
       - name: promo_id
+        description: "Clave natural y nombre de la promoción."
         tests:
           - not_null
-          - relationships:
-              field: 'promo_id'
-              to: ref('sql_server', 'orders')
       - name: discount
+        description: "Porcentaje de descuento aplicado sobre el precio de venta."
       - name: status
+        description: "Estado de la promoción, que indica si está activa o inactiva."
+        tests:
+          - accepted_values:
+              values: ['active', 'inactive']
       - name: date_load
+        description: "Fecha de carga del registro."
+        tests:
+          - not_null
   - name: users
+    description: "Tabla que lista los usuarios registrados."
     columns:
       - name: user_id
+        description: "Clave primaria de la Tabla de Usuarios."
+        tests:
+          - not_null
+          - unique
       - name: updated_at
+        description: "Fecha en la que se produjo la última actualización de los datos del usuario."
+        tests:
+          - not_null
       - name: address_id
+        description: "Clave foránea que relaciona la dirección con el usuario."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_addresses')
+              field: address_id
       - name: last_name
+        description: "Apellido del usuario registrado."
       - name: created_at
+        description: "Fecha en la que fue creado el registro."
+        tests:
+          - not_null
       - name: phone_number
+        description: "Número de teléfono del usuario."
       - name: total_orders
+        description: "Número total de pedidos realizados por el usuario hasta el momento."
       - name: first_name
+        description: "Nombre del usuario."
       - name: email
+        description: "Dirección de email del usuario."
       - name: date_load
+        description: "Fecha de carga del registro."
+        tests:
+          - not_null
   - name: usuarios
     columns:
       - name: user_id
