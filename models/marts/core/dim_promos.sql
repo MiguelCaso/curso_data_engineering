@@ -5,11 +5,11 @@
 }}
 
 WITH int_promos AS (
-    SELECT 
-        promokey_id
-        , promo_name
-        , discount
-        , status
+    SELECT
+        promokey_id as promo_id,
+        promo_name,
+        discount,
+        status
     FROM {{ ref('stg_promos') }}
 )
 
