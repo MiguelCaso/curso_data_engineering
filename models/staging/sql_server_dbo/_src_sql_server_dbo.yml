@@ -72,19 +72,16 @@ sources:
             description: "Foreign Key que relaciona con la tabla de usuarios."
             tests:
               - not_null
-              - unique
           - name: product_id
             data_type: varchar
             description: "Foreign Key que relaciona con la tabla de productos."
             tests:
               - not_null
-              - unique
           - name: session_id
             data_type: varchar
             description: "Clave que agrupa los eventos de una misma sesión."
             tests:
               - not_null
-              - unique
           - name: created_at
             data_type: timestamp_ntz
             description: "Fecha en la que se creó el evento."
@@ -115,7 +112,6 @@ sources:
             description: "Foreign Key que relaciona con la tabla de productos."
             tests:
               - not_null
-              - unique
           - name: quantity
             data_type: number
             description: "Cantidad de productos adquiridos en un pedido."
@@ -147,19 +143,16 @@ sources:
             description: "Foreign Key que relaciona con la tabla de direcciones."
             tests:
               - not_null
-              - unique
           - name: created_at
             data_type: timestamp_tz
             description: "Fecha en la que se creó el Pedido."
             tests:
               - not_null
-              - unique
           - name: promo_id
             data_type: varchar
             description: "Foreign Key que relaciona con la tabla de Promos."
             tests:
               - not_null
-              - unique
           - name: estimated_delivery_at_
             data_type: timestamp_tz
             description: "Tiempo estimado de entrega del pedido."
@@ -171,7 +164,6 @@ sources:
             description: "Foreign Key que relaciona con la tabla de usuarios."
             tests:
               - not_null
-              - unique
           - name: order_total_dollars
             data_type: float
             description: "Coste total del pedido."
@@ -217,7 +209,6 @@ sources:
             description: "Cantidad de productos en el inventario."
             tests:
               - not_null
-              - unique
           - name: _fivetran_deleted
             data_type: boolean
             description: ""
@@ -283,6 +274,7 @@ sources:
             description: "Número de teléfono del usuario."
             tests:
               - not_null
+              - unique                  
           - name: total_orders
             data_type: number
             description: "Número total de pedidos del usuario."

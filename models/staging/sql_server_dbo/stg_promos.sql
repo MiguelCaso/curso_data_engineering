@@ -8,7 +8,7 @@ WITH src_promos AS (
     SELECT
         CAST({{ dbt_utils.generate_surrogate_key(['promo_id']) }}as varchar)
             AS promokey_id,
-        LOWER (promo_id) AS promo_name,
+        LOWER(promo_id) AS promo_name,
         discount,
         status,
         _fivetran_synced AS date_load

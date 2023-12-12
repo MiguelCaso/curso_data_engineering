@@ -23,7 +23,7 @@ stg_users AS (
         address_id,
         first_name,
         last_name,
-        phone_number,
+        REPLACE (phone_number, '-'),
         email,
         created_at,
         updated_at,
