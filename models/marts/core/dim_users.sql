@@ -10,9 +10,10 @@ WITH dim_users AS (
         address_id,
         first_name,
         last_name,
+        phone_number,
         email,
-        created_at,
-        updated_at,
+        created_at_utc,
+        updated_at_utc,
         total_orders,
         date_load
     FROM {{ ref('stg_users') }}

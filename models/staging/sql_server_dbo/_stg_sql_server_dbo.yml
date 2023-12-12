@@ -1,257 +1,432 @@
 version: 2
 
 models:
-  - name: addresses
-    description: "Listado de todas las direcciones utilizadas"
+  - name: stg_addresses
+    description: "Registro de todas las direcciones utilizadas, tanto de envío como de usuario."
     columns:
+
       - name: address_id
         description: "Clave Primaria de la tabla."
+        data_type: varchar
         tests:
           - not_null
           - unique
+
       - name: zipcode
         description: "Código postal asociado a la dirección."
+        data_type: number
         tests:
           - not_null
+
       - name: country
         description: "País asociado a la dirección."
+        data_type: varchar
         tests:
           - not_null
+
       - name: address
         description: "Dirección del envío."
+        data_type: varchar
         tests:
           - not_null
+
       - name: state
         description: "Estado asociado a la dirección."
+        data_type: varchar
         tests:
           - not_null
+
       - name: date_load
         description: "Fecha de carga del registro."
+        data_type: timestamp_tz
         tests:
           - not_null
-  - name: events
+
+  - name: stg_dates
+    description: "Tabla de referencia para obtener información acerca de las fechas."
+    columns:
+
+      - name: date_forecast
+        description: "Clave primaria para la tabla."
+        data_type: date
+
+      - name: date_id
+        description: "Codigo completo de año, mes y día."
+        data_type: number
+
+      - name: year
+        description: "Año al que corresponde la fecha."
+        data_type: number
+
+      - name: month
+        description: "Mes al que corresponde la fecha."
+        data_type: number
+
+      - name: month_desc
+        description: "Nombre del mes correspondiente a la fecha."
+        data_type: varchar
+
+      - name: year_month_id
+        description: "Codigo de año y mes."
+        data_type: number
+
+      - name: day_desc
+        description: "Nombre del día de la semana correspondiente a la fecha."
+        data_type: varchar
+
+      - name: prev_day
+        description: "Día anterior a la fecha indicada."
+        data_type: date
+
+      - name: year_week_day
+        description: "Código de año, semana y día."
+        data_type: varchar
+
+      - name: week
+        description: "Número de semana que corresponde a la fecha indicada."
+        data_type: number
+
+  - name: stg_events
     description: "Tabla que registra los eventos originados en la página web."
     columns:
+
       - name: event_id
         description: "Clave Primaria de la Tabla de Eventos."
+        data_type: varchar
         tests:
           - not_null
           - unique
+
       - name: page_url
         description: "Dirección URL en la que se produjo el evento."
+        data_type: varchar
+
       - name: event_type
         description: "Tipo de evento registrado."
+        data_type: varchar
         tests:
           - not_null
           - accepted_values:
               values:
                 ["checkout", "package_shipped", "add_to_cart", "page_view"]
+
       - name: user_id
         description: "Clave foránea que relaciona el usuario con el evento."
+        data_type: varchar
         tests:
           - not_null
           - relationships:
               field: user_id
               to: ref('sql_server_dbo','events')
+
       - name: product_id
         description: "Clave foránea que relaciona el producto con el evento."
+        data_type: varchar
         tests:
           - relationships:
               field: product_id
               to: ref('sql_server_dbo','products')
+
       - name: session_id
         description: "Identificador de la sesión web abierta por el usuario."
+        data_type: varchar
         tests:
           - not_null
+
       - name: created_at
-        description: "Clave foránea que indica la fecha de creación del evento."
+        description: "Clave foránea que indica el día de creación del evento, en UTC."
+        data_type: timestamp_ntz
         tests:
           - not_null
+
       - name: order_id
         description: "Clave foránea que relaciona el pedido con el evento."
+        data_type: varchar
+
       - name: date_load
         description: "Fecha de carga del registro."
+        data_type: timestamp_ntz
         tests:
           - not_null
-  - name: orders
+
+  - name: stg_events
+    description: "Tabla que registra los eventos producidos por la página web."
+    columns:
+
+      - name: event_id
+        data_type: varchar
+        description: "Clave primaria de la tabla."
+
+      - name: page_url
+        data_type: varchar
+        description: "Dirección desde la que se creó el evento."
+
+      - name: event_type
+        data_type: varchar
+        description: "Tipo de evento creado."
+
+      - name: user_id
+        data_type: varchar
+        description: "Clave foránea que identifica al usuario que produjo el evento."
+
+      - name: product_id
+        data_type: varchar
+        description: "Clave foránea que relaciona el evento con un producto concreto."
+
+      - name: session_id
+        data_type: varchar
+        description: "Identificador de la sesión iniciada por el usuario."
+
+      - name: created_at
+        data_type: timestamp_ntz
+        description: "Fecha y hora en las que se creó el evento."
+
+      - name: order_id
+        data_type: varchar
+        description: "Clave foránea que identifica el pedido realizado."
+
+      - name: date_load
+        data_type: timestamp_tz
+        description: "Fecha y hora de carga del registro."
+
+  - name: stg_order_items
+    description: "Tabla que relaciona los pedidos con los productos."
+    columns:
+
+      - name: order_id
+        description: "Clave foránea que relaciona el pedido con el producto."
+        data_type: varchar
+        tests:
+          - not_null
+
+      - name: product_id
+        description: "Clave foránea que relaciona el producto con el pedido."
+        data_type: varchar
+        tests:
+          - not_null
+
+      - name: quantity
+        description: "Cantidad de productos encargados en la línea de pedido."
+        data_type: number
+        tests:
+          - positive_values
+
+      - name: date_load
+        description: "Fecha en la que se cargó el registro."
+        data_type: timestamp_tz
+        tests:
+          - not_null
+  - name: stg_orders
     description: "Tabla que registra todos los pedidos realizados por los diferentes usuarios."
     columns:
+
       - name: order_id
         description: "Clave primaria de la tabla de Pedidos."
+        data_type: varchar
         tests:
           - not_null
           - unique
-      - name: shipping_service
-        description: "Empresa utilizada para realizar el envío."
-      - name: shipping_cost_dollars
-        description: "Coste de la línea de pedido (producto x cantidad) en dólares."
-        tests:
-          - positive_values
-      - name: address_id
-        description: "Clave foránea que relaciona la dirección de envío con el pedido."
-        tests:
-          - not_null
+
       - name: created_at_utc
         description: "Clave foránea que indica la fecha en la que se creó el pedido, en UTC."
+        data_type: timestamp_ntz
         tests:
           - not_null
+
       - name: promo_id
         description: "Clave foránea que relaciona la promoción utilizada con el pedido."
+        data_type: varchar
         tests:
           - not_null
           - relationships:
               to: ref('stg_promos')
-              field: promokey_id
-      - name: estimated_delivery_at_utc
-        description: "Fecha de envío estimada, en la que el usuario recibiría su pedido."
+              field: promo_id
+
       - name: order_cost_dollars
-        description: "Coste de la línea de pedido, medido en dólares."
+        data_type: number
+        description: "Coste pagado por el usuario por el conjunto de los productos del pedido, medido en dólares. No incluye los gastos de envío ni el descuento por las promociones."
         tests:
           - positive_values
+
+      - name: order_total_dollars
+        description: "Coste total pagado por el usuario por el pedido, incluídos los gastos de envío y los descuentos promocionales."
+        data_type: number
+        tests:
+          - positive_values
+
       - name: user_id
         description: "Clave foránea que relaciona el usuario con el pedido."
+        data_type: varchar
         tests:
           - not_null
           - relationships:
               to: ref('user_id')
               field: stg_users
-      - name: order_total_dollars
-        description: "Coste total del pedido, incluídos los gastos de envío."
+
+      - name: address_id
+        description: "Clave foránea que relaciona al pedido con la dirección de envío."
+        data_type: varchar
         tests:
-          - positive_values
-      - name: delivered_at_utc
-        description: "Fecha de envío final, en la que el usuario recibió su pedido."
+          - not_null
+
       - name: tracking_id
+        data_type: varchar
         description: "Número de seguimiento para el envío."
+
       - name: status
         description: "Estado en el que se encuentra actualmente el envío, según esté en preparación, enviado o entregado."
+        data_type: varchar
         tests:
           - not_null
           - accepted_values:
-              values: ['preparing', 'delivered', 'shipped']
-      - name: date_load
-        description: "Fecha en la que se cargó el registro."
-        tests:
-          - not_null
-  - name: order_items
-    description: "Tabla que relaciona los pedidos con los productos."
-    columns:
-      - name: order_id
-        description: "Clave foránea que relaciona el pedido con el producto."
-        tests:
-          - not_null
-      - name: product_id
-        description: "Clave foránea que relaciona el producto con el pedido."
-        tests:
-          - not_null
-      - name: quantity
-        description: "Cantidad de productos encargados en la línea de pedido."
+              values: ["preparing", "delivered", "shipped"]
+
+      - name: shipping_service
+        description: "Empresa utilizada para realizar el envío."
+        data_type: varchar
+
+      - name: shipping_cost_dollars
+        description: "Coste de los gastos de envío aplicados al pedido, en dólares."
+        data_type: number
         tests:
           - positive_values
+
+      - name: estimated_delivery_at_utc
+        description: "Fecha en la que se estima que el usuario recibirá su pedido."
+        data_type: timestamp_ntz
+
+      - name: delivered_at_utc
+        description: "Fecha de envío final, en la que el usuario recibió su pedido."
+        data_type: timestamp_ntz
+
       - name: date_load
         description: "Fecha en la que se cargó el registro."
+        data_type: timestamp_tz
         tests:
           - not_null
-  - name: products
+
+  - name: stg_products
     description: "Tabla que lista los productos disponibles por el servicio web."
     columns:
+
       - name: product_id
         description: "Clave Primaria de la tabla de Productos."
+        data_type: varchar
         tests:
           - not_null
           - unique
-      - name: price
-        description: "Precio individual del producto."
-        tests:
-          - positive_values
+
       - name: name
         description: "Nombre asociado al producto."
+        data_type: varchar
         tests:
           - not_null
-      - name: inventory
-        description: "Cantidad disponible para la venta de cada producto."
+
+      - name: price
+        description: "Precio individual del producto."
+        data_type: float
         tests:
           - positive_values
+
+      - name: inventory
+        description: "Cantidad disponible para la venta de cada producto."
+        data_type: number
+        tests:
+          - positive_values
+
       - name: date_load
         description: "Fecha de carga del registro."
+        data_type: timestamp_tz
         tests:
           - not_null
-  - name: promos
+
+  - name: stg_promos
     description: "Tabla que registra las diferentes promociones existentes."
     columns:
-      - name: promokey_id
-        description: "Clave subrogada de la tabla de Promociones."
-        tests:
-          - not_null
+
       - name: promo_id
-        description: "Clave natural y nombre de la promoción."
+        description: "Clave subrogada de la tabla de Promociones."
+        data_type: varchar
         tests:
           - not_null
+
+      - name: promo_name
+        description: "Clave natural y nombre de la promoción."
+        data_type: varchar
+        tests:
+          - not_null
+
       - name: discount
         description: "Porcentaje de descuento aplicado sobre el precio de venta."
+        data_type: number
+
       - name: status
         description: "Estado de la promoción, que indica si está activa o inactiva."
+        data_type: varchar
         tests:
           - accepted_values:
-              values: ['active', 'inactive']
+              values: ["active", "inactive"]
+
       - name: date_load
         description: "Fecha de carga del registro."
+        data_type: timestamp_tz
         tests:
           - not_null
-  - name: users
+
+  - name: stg_users
     description: "Tabla que lista los usuarios registrados."
     columns:
+
       - name: user_id
         description: "Clave primaria de la Tabla de Usuarios."
+        data_type: varchar
         tests:
           - not_null
           - unique
-      - name: updated_at
-        description: "Fecha en la que se produjo la última actualización de los datos del usuario."
-        tests:
-          - not_null
+
       - name: address_id
         description: "Clave foránea que relaciona la dirección con el usuario."
+        data_type: varchar
         tests:
           - not_null
           - relationships:
               to: ref('stg_addresses')
               field: address_id
-      - name: last_name
-        description: "Apellido del usuario registrado."
-      - name: created_at
-        description: "Fecha en la que fue creado el registro."
-        tests:
-          - not_null
-      - name: phone_number
-        description: "Número de teléfono del usuario."
-      - name: total_orders
-        description: "Número total de pedidos realizados por el usuario hasta el momento."
+
       - name: first_name
         description: "Nombre del usuario."
+        data_type: varchar
+
+      - name: last_name
+        description: "Apellido del usuario registrado."
+        data_type: varchar
+
+      - name: phone_number
+        description: "Número de teléfono del usuario."
+        data_type: varchar
+
       - name: email
         description: "Dirección de email del usuario."
-      - name: date_load
-        description: "Fecha de carga del registro."
+        data_type: varchar
+
+      - name: created_at_utc
+        description: "Fecha en la que fue creado el registro."
+        data_type: timestamp_tz
         tests:
           - not_null
-  - name: usuarios
-    columns:
-      - name: user_id
-      - name: first_name
-      - name: last_name
-      - name: address_id
-      - name: phone_number
-      - name: _fivetran_synced
-  - name: fechas
-    columns:
-      - name: fecha_forecast
-      - name: id_date
-      - name: anio
-      - name: mes
-      - name: desc_mes
-      - name: id_anio_mes
-      - name: desc_dia
-      - name: dia_previo
-      - name: anio_semana_dia
-      - name: semana
+
+      - name: updated_at_utc
+        description: "Fecha en la que se produjo la última actualización de los datos del usuario."
+        data_type: timestamp_tz
+        tests:
+          - not_null
+
+      - name: total_orders
+        description: "Número total de pedidos realizados por el usuario hasta el momento."
+        data_type: number
+
+      - name: date_load
+        description: "Fecha de carga del registro."
+        data_type: timestamp_tz
+        tests:
+          - not_null

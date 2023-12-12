@@ -11,14 +11,15 @@ WITH src_events AS (
 
 stg_events AS (
     SELECT
-        event_id,
-        page_url,
-        event_type,
-        user_id,
-        product_id,
-        session_id,
-        created_at,
-        order_id,
+        cast (event_id as varchar) as event_id,
+        cast (page_url as varchar) as page_url,
+        cast (event_type as varchar) as event_type,
+        cast (user_id as varchar) as user_id,
+        cast (product_id as varchar) as product_id,
+        cast (session_id as varchar) as session_id,
+        cast (created_at as date) as created_at_date,
+        cast (created_at as time) as created_at_time_utc,
+        cast (order_id as varchar) as order_id,
         _fivetran_synced AS date_load
     FROM src_events
 )

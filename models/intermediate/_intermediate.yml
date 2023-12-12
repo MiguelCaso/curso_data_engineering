@@ -1,0 +1,45 @@
+version: 2
+
+models:
+  - name: int_order_items
+    description: "Tabla intermedia que comienza a integrar claves foráneas para construir la tabla de hechos."
+    columns:
+      - name: order_id
+        data_type: varchar
+        description: "Clave foránea que identifica el pedido al que correspone la línea."
+
+      - name: product_id
+        data_type: varchar
+        description: "Clave foránea que identifica el producto al que corresponde cada línea de pedido."
+
+      - name: user_id
+        data_type: varchar
+        description: "Clave foránea que identifica el usuario que ha encargado la línea de pedido."
+
+      - name: shipping_address
+        data_type: varchar
+        description: "Clave foránea que identifica la dirección relacionada con el envío de la línea de pedido."
+
+      - name: promo_id
+        data_type: varchar
+        description: "Clave foránea que identifica la promoción que deberá aplicarse en la línea de pedido."
+
+      - name: created_at_utc
+        data_type: datetime
+        description: "Fecha de creación de la línea de pedido."
+
+      - name: quantity
+        data_type: number
+        description: "Cantidad de productos que se han encargado por cada línea de pedido."
+
+      - name: order_line_cost_usd
+        data_type: float
+        description: "Coste, en dólares, de la línea de pedido, sin considerar los gastos de envío ni la promoción aplicable."
+
+      - name: order_line_discount_usd
+        data_type: float
+        description: "Cantidad, en dólares, que se descontará del coste de la línea del pedido, debido a la promoción aplicada. No incluye el descuento sobre los gastos de envío."
+
+      - name: date_load
+        data_type: timestamp_tz
+        description: "Fecha de carga del registro."

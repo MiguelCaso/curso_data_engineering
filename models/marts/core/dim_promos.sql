@@ -6,7 +6,7 @@
 
 WITH int_promos AS (
     SELECT
-        promokey_id as promo_id,
+        promo_id,
         promo_name,
         discount,
         status

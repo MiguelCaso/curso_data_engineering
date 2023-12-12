@@ -9,8 +9,7 @@ WITH int_addresses AS (
         address_id,
         zipcode,
         country,
-        address AS street, -- Separar la calle
-        address AS number, -- Separar el numero
+        address,
         state,
         date_load
     FROM {{ ref('stg_addresses') }}

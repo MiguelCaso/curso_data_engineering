@@ -3,7 +3,6 @@
     materialized='table'
   )
 }}
--- Arreglar esto. Es igual.
 
 WITH int_orders AS (
     SELECT

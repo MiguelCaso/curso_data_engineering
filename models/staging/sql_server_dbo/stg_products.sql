@@ -11,11 +11,11 @@ WITH src_products AS (
 
 stg_products AS (
     SELECT
-        product_id,
-        name,
-        price,
-        inventory,
-        _fivetran_synced AS date_load
+        cast (product_id as varchar) as product_id,
+        cast (name as varchar) as name,
+        cast (price as number) as price,
+        cast (inventory as number) as inventory,
+        _fivetran_synced as date_load
     FROM src_products
 )
 
