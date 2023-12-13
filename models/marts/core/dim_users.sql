@@ -5,16 +5,16 @@
 }}
 
 WITH dim_users AS (
-    SELECT 
+    SELECT
         user_id,
         address_id,
         first_name,
         last_name,
+        phone_number,
         email,
-        created_at,
-        updated_at,
-        total_orders,
-        date_load
+        created_at_utc,
+        updated_at_utc,
+        total_orders
     FROM {{ ref('stg_users') }}
 )
 

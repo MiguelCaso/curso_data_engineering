@@ -4,39 +4,25 @@
   )
 }}
 
-WITH prev_order_items AS (
-    SELECT
-        stg_order_items.order_id,
-        stg_order_items.product_id,
-        stg_order_items.quantity,
-        stg_orders.user_id,
-        stg_orders.address_id,
-        stg_orders.promokey_id,
-        stg_orders.created_at_utc,
-        stg_products.price,
-        stg_order_items.date_load
-    FROM {{ ref('stg_order_items') }}
-    INNER JOIN
-        {{ ref('stg_orders') }}
-        ON stg_order_items.order_id = stg_orders.order_id
-    INNER JOIN
-        {{ ref('stg_products') }}
-        ON stg_order_items.product_id = stg_products.product_id
+WITH int_order_items AS (
+    SELECT *
+    FROM {{ ref('int_order_items') }}
 ),
 
-post_order_items AS (
+fct_order_items AS (
     SELECT
         order_id,
         product_id,
         user_id,
-        address_id AS shipping_address,
-        promokey_id AS promo_id,
-        created_at_utc,
-        quantity,
-        price * quantity AS order_line_cost,
-        date_load
-    FROM prev_order_items
+        shipping_address_id,
+        promo_id,
+        cast (created_at_utc as date) as created_at_date_utc,
+        cast (created_at_utc as time) as created_at_time_utc,
+        quantity as product_quantity,
+        order_line_cost_usd,
+        order_line_discount_usd
+    FROM int_order_items
     ORDER BY order_id
 )
 
-SELECT * FROM post_order_items
+SELECT * FROM fct_order_items

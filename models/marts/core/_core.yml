@@ -2,65 +2,249 @@ version: 2
 
 models:
   - name: dim_address
+    description: "Dimensión con todas las direcciones registradas, tanto de envío como de usuario."
     columns:
       - name: address_id
+        data_type: varchar
+        description: "Clave Primaria de la tabla."
+
       - name: zipcode
+        data_type: number
+        description: "Código postal asociado a la dirección."
+
       - name: country
-      - name: street
-      - name: number
+        data_type: varchar
+        description: "País asociado a la dirección."
+
+      - name: address
+        data_type: varchar
+        description: "Dirección del envío."
+
       - name: state
+        data_type: varchar
+        description: "Estado, dentro de los Estados Unidos, asociado a la dirección."
+
       - name: date_load
-  - name: dim_orders
-    columns:
-      - name: order_id
-      - name: created_at_utc
-      - name: promokey_id
-      - name: user_id
-      - name: order_cost_dollars
-      - name: shipping_cost_dollars
-      - name: order_total_dollars
-  - name: dim_shipping
-    columns:
-      - name: order_id
-      - name: shipping_service
-      - name: address_id
-      - name: estimated_delivery_at_utc
-      - name: tracking_id
-      - name: delivered_at_utc
-      - name: status
-  - name: fct_order_items
-    columns:
-      - name: order_id
-      - name: product_id
-      - name: quantity
-      - name: date_load
-  - name: dim_promos
-    columns:
-      - name: promokey_id
-      - name: promo_name
-      - name: discount
-      - name: status
+        data_type: timestamp_tz
+        description: "Fecha de carga del registro."
+
   - name: dim_date
+    description: "Tabla de referencia para obtener información acerca de las fechas."
     columns:
-      - name: fecha_forecast
-      - name: id_date
-      - name: anio
-      - name: mes
-      - name: desc_mes
-      - name: id_anio_mes
-      - name: desc_dia
-      - name: dia_previo
-      - name: anio_semana_dia
-      - name: semana
+      - name: date_forecast
+        description: "Clave primaria para la tabla."
+        data_type: date
+
+      - name: date_id
+        description: "Codigo completo de año, mes y día."
+        data_type: number
+
+      - name: year
+        description: "Año al que corresponde la fecha."
+        data_type: number
+
+      - name: month
+        description: "Mes al que corresponde la fecha."
+        data_type: number
+
+      - name: month_desc
+        description: "Nombre del mes correspondiente a la fecha."
+        data_type: varchar
+
+      - name: year_month_id
+        description: "Codigo de año y mes."
+        data_type: number
+
+      - name: day_desc
+        description: "Nombre del día de la semana correspondiente a la fecha."
+        data_type: varchar
+
+      - name: prev_day
+        description: "Día anterior a la fecha indicada."
+        data_type: date
+
+      - name: year_week_day
+        description: "Código de año, semana y día."
+        data_type: varchar
+
+      - name: week
+        description: "Número de semana que corresponde a la fecha indicada."
+        data_type: number
+
+  - name: dim_orders
+    description: "Dimesión que registra los costes agrupados de los pedidos realizados."
+    columns:
+      - name: order_id
+        data_type: varchar
+        description: "Clave primaria de la tabla."
+
+      - name: order_cost_dollars
+        data_type: float
+        description: "Coste pagado por el usuario por el conjunto de los productos del pedido, medido en dólares. No incluye los gastos de envío ni el descuento por las promociones."
+
+      - name: shipping_cost_dollars
+        data_type: float
+        description: "Coste de los gastos de envío aplicados al pedido, en dólares."
+
+      - name: order_total_dollars
+        data_type: float
+        description: "Coste total pagado por el usuario por el pedido, incluídos los gastos de envío y los descuentos promocionales."
+
+  - name: dim_products
+    description: "Dimesión de los productos disponibles por la tienda para su pedido."
+    columns:
+      - name: product_id
+        data_type: varchar
+        description: "Clave Primaria de la tabla de Productos."
+
+      - name: name
+        data_type: varchar
+        description: "Nombre de mercado del producto."
+
+      - name: price
+        data_type: float
+        description: "Precio individual del producto."
+
+      - name: inventory
+        data_type: number
+        description: "Cantidad disponible para la venta de cada producto."
+
+  - name: dim_promos
+    description: "Dimensión que detalla las diferentes promociones existentes."
+    columns:
+      - name: promo_id
+        data_type: varchar
+        description: "Clave primaria de la tabla."
+
+      - name: promo_name
+        data_type: varchar
+        description: "Nombre con el que se denomina la promoción."
+
+      - name: discount
+        data_type: number
+        description: "Porcentaje de descuento aplicado sobre el precio de venta."
+
+      - name: status
+        data_type: varchar
+        description: "Estado de la promoción, que indica si está activa o inactiva."
+
+  - name: dim_shipping
+    description: "Dimensión que registra la información acerca de los envíos de los diferentes pedidos."
+    columns:   
+      - name: order_id
+        data_type: varchar
+        description: "Clave primaria de la tabla que identifica el pedido."
+
+      - name: address_id
+        data_type: varchar
+        description: "Clave foránea que relaciona al pedido con la dirección de envío."
+
+      - name: status
+        data_type: varchar
+        description: "Estado en el que se encuentra actualmente el envío, según esté en preparación, enviado o entregado."
+
+      - name: shipping_service
+        data_type: varchar
+        description: "Empresa utilizada para realizar el envío."
+
+      - name: estimated_delivery_at_utc
+        data_type: timestamp_tz
+        description: "Fecha en la que se estima que el usuario recibirá su pedido."
+
+      - name: tracking_id
+        data_type: varchar
+        description: "Número de seguimiento para el envío."
+
+      - name: delivered_at_utc
+        data_type: timestamp_tz
+        description: "Fecha de recepción del pedido, en la que el usuario lo recibió."
+
   - name: dim_users
+    description: "Dimensión que contiene la información sobre los usuarios registrados y sus datos personales."
     columns:
       - name: user_id
+        data_type: varchar
+        description: "Clave primaria de la tabla."
+
       - name: address_id
+        data_type: varchar
+        description: "Clave foránea que relaciona al usuario con su dirección de registro. Es independiente de la dirección de envío."
+
       - name: first_name
+        data_type: varchar
+        description: "Nombre del usuario."
+
       - name: last_name
+        data_type: varchar
+        description: "Apellido del usuario."
+
       - name: phone_number
+        data_type: varchar
+        description: "Número de teléfono del usuario."
+        
       - name: email
+        data_type: varchar
+        description: "Dirección email del usuario."
+
       - name: created_at
+        data_type: timestamp_tz
+        description: "Fecha en la que fue creado el registro."
+
       - name: updated_at
+        data_type: timestamp_tz
+        description: "Fecha en la que se produjo la última actualización de los datos del usuario."
+
       - name: total_orders
+        data_type: number
+        description: "Número total de pedidos realizados por el usuario hasta el momento."
+
       - name: date_load
+        data_type: timestamp_tz
+        description: "Fecha de carga del registro."
+
+  - name: fct_order_items
+    description: "Tabla de Hechos que registra cada línea de pedido con todos los datos disponibles acerca de cada hecho."
+    columns:
+      - name: order_id
+        data_type: varchar
+        description: "Clave foránea que identifica el pedido al que correspone la línea."
+
+      - name: product_id
+        data_type: varchar
+        description: "Clave foránea que identifica el producto al que corresponde cada línea de pedido."
+
+      - name: user_id
+        data_type: varchar
+        description: "Clave foránea que identifica el usuario que ha encargado la línea de pedido."
+
+      - name: shipping_address
+        data_type: varchar
+        description: "Clave foránea que identifica la dirección relacionada con el envío de la línea de pedido."
+
+      - name: promo_id
+        data_type: varchar
+        description: "Clave foránea que identifica la promoción que deberá aplicarse en la línea de pedido."
+
+      - name: created_at_date_utc
+        data_type: date
+        description: "Clave foránea que identifica la fecha en la que se creó la línea de pedido."
+
+      - name: created_at_time_utc
+        data_type: time
+        description: "Hora en la que se creó la línea de pedido, en UTC."
+
+      - name: quantity
+        data_type: number
+        description: "Cantidad de productos que se han encargado por cada línea de pedido."
+
+      - name: order_line_cost_usd
+        data_type: float
+        description: "Coste, en dólares, de la línea de pedido, sin considerar los gastos de envío ni la promoción aplicable."
+
+      - name: order_line_discount_usd
+        data_type: float
+        description: "Cantidad, en dólares, que se descontará del coste de la línea del pedido, debido a la promoción aplicada. No incluye el descuento sobre los gastos de envío."
+
+      - name: date_load
+        data_type: timestamp_tz
+        description: "Fecha de carga del registro."

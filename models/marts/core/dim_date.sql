@@ -4,19 +4,9 @@
   )
 }}
 
-WITH int_fechas AS (
-    SELECT
-        fecha_forecast,
-        id_date,
-        anio,
-        mes,
-        desc_mes,
-        id_anio_mes,
-        desc_dia,
-        dia_previo,
-        anio_semana_dia,
-        semana
-    FROM {{ ref('stg_fechas') }}
+WITH dim_fechas AS (
+    SELECT *
+    FROM {{ ref('stg_dates') }}
 )
 
-SELECT * FROM int_fechas
+SELECT * FROM dim_fechas

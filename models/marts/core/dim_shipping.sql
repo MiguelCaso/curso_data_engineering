@@ -4,8 +4,7 @@
   )
 }}
 
-WITH
-stg_shipping AS (
+WITH dim_shipping AS (
     SELECT
         order_id,
         address_id,
@@ -17,4 +16,4 @@ stg_shipping AS (
     FROM {{ ref ('stg_orders') }}
 )
 
-SELECT * FROM stg_shipping
+SELECT * FROM dim_shipping

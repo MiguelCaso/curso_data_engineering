@@ -4,16 +4,14 @@
   )
 }}
 
-WITH int_addresses AS (
+WITH dim_addresses AS (
     SELECT
         address_id,
         zipcode,
         country,
-        address AS street, -- Separar la calle
-        address AS number, -- Separar el numero
-        state,
-        date_load
+        address,
+        state
     FROM {{ ref('stg_addresses') }}
 )
 
-SELECT * FROM int_addresses
+SELECT * FROM dim_addresses
