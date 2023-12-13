@@ -109,10 +109,6 @@ models:
         data_type: number
         description: "Cantidad disponible para la venta de cada producto."
 
-      - name: date_load
-        data_type: timestamp_tz
-        description: "Fecha de carga del registro."
-
   - name: dim_promos
     description: "Dimensión que detalla las diferentes promociones existentes."
     columns:

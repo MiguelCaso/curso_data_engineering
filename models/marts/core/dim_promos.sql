@@ -4,7 +4,7 @@
   )
 }}
 
-WITH int_promos AS (
+WITH dim_promos AS (
     SELECT
         promo_id,
         promo_name,
@@ -13,4 +13,4 @@ WITH int_promos AS (
     FROM {{ ref('stg_promos') }}
 )
 
-SELECT * FROM int_promos
+SELECT * FROM dim_promos

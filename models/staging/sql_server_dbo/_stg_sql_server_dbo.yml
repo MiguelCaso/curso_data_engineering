@@ -243,14 +243,14 @@ models:
               field: promo_id
 
       - name: order_cost_dollars
-        data_type: number
+        data_type: float
         description: "Coste pagado por el usuario por el conjunto de los productos del pedido, medido en dólares. No incluye los gastos de envío ni el descuento por las promociones."
         tests:
           - positive_values
 
       - name: order_total_dollars
         description: "Coste total pagado por el usuario por el pedido, incluídos los gastos de envío y los descuentos promocionales."
-        data_type: number
+        data_type: float
         tests:
           - positive_values
 
@@ -287,7 +287,7 @@ models:
 
       - name: shipping_cost_dollars
         description: "Coste de los gastos de envío aplicados al pedido, en dólares."
-        data_type: number
+        data_type: float
         tests:
           - positive_values
 

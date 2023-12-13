@@ -4,9 +4,9 @@
   )
 }}
 
-WITH int_fechas AS (
+WITH dim_fechas AS (
     SELECT *
     FROM {{ ref('stg_dates') }}
 )
 
-SELECT * FROM int_fechas
+SELECT * FROM dim_fechas
