@@ -20,7 +20,9 @@ fct_order_items AS (
         cast (created_at_utc as time) as created_at_time_utc,
         quantity as product_quantity,
         order_line_cost_usd,
-        order_line_discount_usd
+        order_line_discount_usd,
+        sliced_shipping_cost_usd,
+        sliced_shipping_discount_usd
     FROM int_order_items
     ORDER BY order_id
 )
